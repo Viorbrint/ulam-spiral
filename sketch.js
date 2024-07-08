@@ -1,20 +1,21 @@
-let cellWidth = 3, rows, columns;
+let cellWidth, rows = 50, columns;
 let x, y, num = 1;
 let dirX = 1, dirY = 0;
 let turnNum = 1, turnStep = 1, turnCount = 0;
 let lastNum;
 let prime;
+let cells = [];
 
 function setup() 
 {
 	frameRate(60);
 	createCanvas(windowWidth, windowHeight - 4);
 
-	/*cellWidth = (height - (height / rows)) / rows;
-	columns = ceil(width / cellWidth);*/
-	columns = width;
+	cellWidth = (height - (height / rows)) / rows;
+	columns = ceil(width / cellWidth);
 	x = width / 2;
 	y = height / 2;
+	px = x, py = y;
 
 	lastNum = sq((columns + 1) % 2 + columns);
 
@@ -32,42 +33,36 @@ function setup()
 		}
 	}
 
-	background(0);
+	ellipseMode(CENTER);
+	noStroke();
+
+	setGame();
 }
 function draw()
 {
-	for (var i = 0; i < 5000; i++) 
-		game();
-
-	/*if(num > lastNum)
-	{
-		noLoop();
-		save("ulam.png");
-	}*/
-} 
-function view()
-{
-	noStroke();
-	rectMode(CENTER);
-	if(prime[num] || num == 1)
-	{
-		fill(
-			map(x, 0, width, 0, 220),
-			random(0, 40),
-			map(x, 0, width, 150, 0)
-		);
-		if(num == 1)
-			fill(200);
-		square(x, y, cellWidth);
+	background(0);
+	for (var i = 0; i < cells.length; i++) {
+		cells[i].view();
 	}
-
-	//square(x, y, cellWidth);  // rofl
-}
-function game()
-{
-	if(num <= lastNum)
+} 
+function setGame()
+{	
+	let i = 0;
+	while(num <= lastNum)
 	{
-		view();
+		
+		if(prime[num])
+		{
+			let colr = color(
+            	random(180, 220),
+            	random(0, 30),
+           		random(20, 40)
+       		);
+
+			cells[i] = new Cell(x, y, colr);
+			i++;
+		}
+
 		if(num == turnNum + turnStep)
 		{
 			turnCount++;
@@ -90,4 +85,15 @@ function game()
 		y = y + cellWidth * dirY;
 		num++;
 	}
+}
+function keyPressed() 
+{
+   	if (keyCode === LEFT_ARROW)
+   	{
+   		cellWidth--;
+   	}
+   	if (keyCode === RIGHT_ARROW)
+   	{
+   		cellWidth++;
+   	}
 }
